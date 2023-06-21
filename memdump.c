@@ -94,7 +94,7 @@ int main(int argc, char **argv) {
                 break;
             case 'V':
                 version = VERSION;
-                printf("Current version is %d\n",version);
+                printf("Hello Current version is %d\n",version);
                 exit(1);
             default:
                 printf("Option incorrect\n");
