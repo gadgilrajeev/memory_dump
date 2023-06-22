@@ -112,7 +112,7 @@ int main(int argc, char **argv) {
             exit(1);
         }
 
-        fwrite(ptr_mem,RAM_SIZE,1,dump_file);
+        fwrite(ptr_mem,end_addr-start_addr,1,dump_file);
 
         sprintf(filename,"hexDump_%d.hex",dump_count);
 
@@ -122,7 +122,7 @@ int main(int argc, char **argv) {
             exit(1);
         }
 
-        hexDump(hex_fp,ptr_mem,start_addr,end_addr,RAM_SIZE); // change sizeof(ptr_mem) to RAM_SIZE
+        hexDump(hex_fp,ptr_mem,start_addr,end_addr,end_addr-start_addr); // change sizeof(ptr_mem) to RAM_SIZE
 
         fclose(dump_file);
         fclose(hex_fp);
