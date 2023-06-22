@@ -97,7 +97,7 @@ int main(int argc, char **argv) {
                 printf("Hello Current version is %d\n",version);
                 exit(1);
             default:
-                printf("Option incorrect\n");
+                printf("Given option is incorrect\n");
                 return 1;
         }
     }
