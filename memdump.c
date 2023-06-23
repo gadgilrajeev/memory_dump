@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
+#include <windows.h>
+
 #define VERSION 0
 #define RAM_SIZE 1024*1024*10// 10MB
 
@@ -16,11 +18,11 @@ void hexDump(FILE *hex_fp, void *addr,int start_addr,int end_addr,int len)
         // Multiple of 16 means new line (with line offset).
 
         if (((i-start_addr) % 16) == 0) {
-            // Just don't print ASCII for the zeroth line.
+            
             if (i != start_addr)
                 fprintf(hex_fp,"  %s\n", buff);
 
-            // Output the offset.
+           
             fprintf(hex_fp,"  %04x ", i);
 
         }
@@ -61,6 +63,8 @@ int main(int argc, char **argv) {
     int start_addr = -1;
     int end_addr = -1;
 
+srand(time(NULL));
+
     ptr_mem = (double *) malloc(RAM_SIZE);
 
     for(i=0;i<RAM_SIZE/sizeof(double);i++) {
@@ -82,7 +86,7 @@ int main(int argc, char **argv) {
                 exit(1);  
             case 's':
                 sscanf(optarg, "%x", &start_addr);
-                break; 
+                break;
             case 'e':
                 sscanf(optarg, "%x", &end_addr);
                 break;
@@ -94,18 +98,36 @@ int main(int argc, char **argv) {
                 break;
             case 'V':
                 version = VERSION;
-                printf("Hello Current version is %d\n",version);
+                printf("Current version is %d\n",version);
                 exit(1);
             default:
-                printf("Given option is incorrect\n");
+                printf("Option incorrect\n");
                 return 1;
         }
     }
 
-    char filename[num_files];
+    char bin_path[MAX_PATH];
+    char hex_path[MAX_PATH];
+
+    if(!GetCurrentDirectory(MAX_PATH, bin_path)) {
+        printf("Error getting current directory\n");
+        exit(1);
+    }
+
+    if(!GetCurrentDirectory(MAX_PATH, hex_path)) {
+        printf("Error getting current directory\n");
+        exit(1);
+    }
+
+    strcat(bin_path, "\\bin_files\\");
+    strcat(hex_path, "\\hex_files\\");
+
+   
+
+    char filename[MAX_PATH];
 
     for(i=0;i<num_files;i++) {
-        sprintf(filename,"dump_%d.bin", dump_count);
+        sprintf(filename,"%s\\dump_%d.bin", bin_path, dump_count);
         FILE *dump_file = fopen(filename, "wb");
         if(dump_file == NULL) {
             printf("Error creating dump file %s\n", filename);
@@ -114,7 +136,7 @@ int main(int argc, char **argv) {
 
         fwrite(ptr_mem,end_addr-start_addr,1,dump_file);
 
-        sprintf(filename,"hexDump_%d.hex",dump_count);
+        sprintf(filename,"%s\\hexDump_%d.hex",hex_path,dump_count);
 
         FILE *hex_fp = fopen(filename, "w");
         if(hex_fp == NULL) {
@@ -136,4 +158,3 @@ int main(int argc, char **argv) {
     free(ptr_mem);
     return EXIT_SUCCESS;
 }
-
