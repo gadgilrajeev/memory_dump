@@ -2,70 +2,63 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
+#include <windows.h>
+
 #define VERSION 0
-#define RAM_SIZE 1024*1024*10// 10MB
+#define RAM_SIZE 1024*1024*10 // 10MB
 
-void hexDump(FILE *hex_fp, void *addr,int start_addr,int end_addr,int len)
-{
-    int i;
-    unsigned char buff[17];
-    unsigned char *pc = (unsigned char*)addr;
+void convertToHex(char *bin_path, char *hex_path, int dump_count, int start_addr, int end_addr) {
+    char bin_filename[MAX_PATH];
+    char hex_filename[MAX_PATH];
 
-    // Process every byte in the data.
-    for (i = start_addr; i < end_addr; i++) {
-        // Multiple of 16 means new line (with line offset).
+    sprintf(bin_filename, "%s\\dump_%d.bin", bin_path, dump_count);
+    sprintf(hex_filename, "%s\\dump_%d.hex", hex_path, dump_count);
 
-        if (((i-start_addr) % 16) == 0) {
-            // Just don't print ASCII for the zeroth line.
-            if (i != start_addr)
-                fprintf(hex_fp,"  %s\n", buff);
-
-            // Output the offset.
-            fprintf(hex_fp,"  %04x ", i);
-
-        }
-
-        // Now the hex code for the specific character.
-        fprintf(hex_fp," %02x", pc[i]);
-
-        // And store a printable ASCII character for later.
-        if ((pc[i] < 0x20) || (pc[i] > 0x7e)) {
-            buff[(i-start_addr) % 16] = '.';
-        } else {
-            buff[(i-start_addr) % 16] = pc[i];
-        }
-
-        buff[((i-start_addr) % 16) + 1] = '\0';
-
+    FILE *bin_file = fopen(bin_filename, "rb");
+    if(bin_file == NULL) {
+        printf("Error opening binary file %s\n", bin_filename);
+        exit(1);
     }
 
-    // Pad out last line if not exactly 16 characters.
-    while (((i-start_addr) % 16) != 0) {
-        fprintf(hex_fp,"   ");
-        i++;
+    FILE *hex_file = fopen(hex_filename, "w");
+    if(hex_file == NULL) {
+        printf("Error creating hex file %s\n", hex_filename);
+        exit(1);
     }
 
-    // And print the final ASCII bit.
-    fprintf(hex_fp,"  %s\n", buff);
+    unsigned char buffer[16];
+    size_t binRead;
+    int address = start_addr;
 
+    while((binRead = fread(buffer, sizeof(unsigned char), 16, bin_file)) > 0) {
+        fprintf(hex_file, "0x%08X\t", address);
+        for(size_t i = 0; i < binRead; i++) {
+            fprintf(hex_file, "%02X ", buffer[i]);
+        }
+        fprintf(hex_file, "\n");
+        address += binRead;
+    }
+
+    fclose(bin_file);
+    fclose(hex_file);
 }
 
 int main(int argc, char **argv) {
-   
-    int option = 0,i;
-    int interval=0; //default interval is 30 seconds
-    int num_files=0;//default dump instances
-    int version=99;
+    int option = 0, i;
+    int interval = 30; // default interval is 30 seconds
+    int num_files = 0; // default dump instances
+    int version = 99;
     int dump_count = 0;
     double *ptr_mem;
     int start_addr = -1;
     int end_addr = -1;
 
+    srand(time(NULL));
+
     ptr_mem = (double *) malloc(RAM_SIZE);
 
-    for(i=0;i<RAM_SIZE/sizeof(double);i++) {
-       ptr_mem[i] = (double) rand() / RAND_MAX; // fill memory with random values
-
+    for(i = 0; i < RAM_SIZE / sizeof(double); i++) {
+        ptr_mem[i] = (double) rand() / RAND_MAX; // fill memory with random values
     }
 
     while ((option = getopt(argc, argv, "s:e:i:n:hV")) != -1) {
@@ -79,10 +72,10 @@ int main(int argc, char **argv) {
                 printf("-n\t\tNumber of times\n\t\t1)Should be more than 1\n");
                 printf("-V\t\tShow current version\n");
 
-                exit(1);  
+                exit(1);
             case 's':
                 sscanf(optarg, "%x", &start_addr);
-                break; 
+                break;
             case 'e':
                 sscanf(optarg, "%x", &end_addr);
                 break;
@@ -94,7 +87,7 @@ int main(int argc, char **argv) {
                 break;
             case 'V':
                 version = VERSION;
-                printf("Current version is %d\n",version);
+                printf("Current version is %d\n", version);
                 exit(1);
             default:
                 printf("Option incorrect\n");
@@ -102,30 +95,34 @@ int main(int argc, char **argv) {
         }
     }
 
-    char filename[num_files];
+    char bin_path[MAX_PATH];
+    char hex_path[MAX_PATH];
 
-    for(i=0;i<num_files;i++) {
-        sprintf(filename,"dump_%d.bin", dump_count);
+    if(!GetCurrentDirectory(MAX_PATH, bin_path)) {
+        printf("Error getting current directory\n");
+        exit(1);
+    }
+
+    strcpy(hex_path, bin_path);
+    strcat(bin_path, "\\bin_files\\");
+    strcat(hex_path, "\\hex_files\\");
+
+    char filename[MAX_PATH];
+
+    for(i = 0; i < num_files; i++) {
+        sprintf(filename, "%s\\dump_%d.bin", bin_path, dump_count);
+
         FILE *dump_file = fopen(filename, "wb");
         if(dump_file == NULL) {
             printf("Error creating dump file %s\n", filename);
             exit(1);
         }
 
-        fwrite(ptr_mem,RAM_SIZE,1,dump_file);
-
-        sprintf(filename,"hexDump_%d.hex",dump_count);
-
-        FILE *hex_fp = fopen(filename, "w");
-        if(hex_fp == NULL) {
-            printf("Error creating dump file %s\n", filename);
-            exit(1);
-        }
-
-        hexDump(hex_fp,ptr_mem,start_addr,end_addr,RAM_SIZE); // change sizeof(ptr_mem) to RAM_SIZE
+        fwrite(ptr_mem + start_addr, end_addr - start_addr, 1, dump_file);
 
         fclose(dump_file);
-        fclose(hex_fp);
+
+        convertToHex(bin_path, hex_path, dump_count, start_addr, end_addr);
 
         start_addr++;
         end_addr++;
@@ -136,4 +133,3 @@ int main(int argc, char **argv) {
     free(ptr_mem);
     return EXIT_SUCCESS;
 }
-
