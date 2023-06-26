@@ -1,0 +1,149 @@
+.navcontainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 100%;
+}
+
+.logo a {
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+  text-decoration: none;
+}
+
+.menu {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+nav {
+  background-color: #333;
+  color: #fff;
+  height: 60px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+.menu li {
+  margin-left: 20px;
+}
+
+.menu li a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.menu li a:hover {
+  color: #ff6b6b;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    color: #333;
+}
+
+.horizontal-form .form-row {
+    display: flex;
+    justify-content: space-around;
+}
+
+.horizontal-form .form-group {
+    flex: 0 0 20%;
+    padding: 5px;
+    text-align: center;
+}
+
+.horizontal-form .form-group label {
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+.horizontal-form .form-group input[type="number"],
+.horizontal-form .form-group input[type="text"] {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.horizontal-form .form-group input[type="submit"] {
+    margin-top: 10px;
+    padding: 10px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+/* Popup styles */
+#popup {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
+.popup-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Button styles */
+button {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+button:focus {
+  outline: none;
+}
+
+.fixed{
+    position: fixed;
+    top: 60px;
+    z-index: 99;
+    background: white;
+}

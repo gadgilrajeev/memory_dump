@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>heatmap</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+        <style>
+        .button-container {
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+
+        .button-container a {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 0 5px;
+            background-color: #428bca;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        /* Loader styles */
+        .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .loader-container.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loader {
+            display: inline-block;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    {% if bin_files %}
+        <style>
+          .center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 20px;
+            width: 100%;
+          }
+        </style>
+        <div class="center fixed">
+          <form method="POST" style="text-align: center;" action="/display_heatmap">
+            <label for="base_file">Base File:</label>
+            <select id="base_file" name="base_file" style="margin-right: 10px;">
+              {% for file in bin_files %}
+                <option value="{{ file }}">{{ file }}</option>
+              {% endfor %}
+            </select>
+
+            <label for="second_file">Second File:</label>
+            <select id="second_file" name="second_file" style="margin-right: 10px;">
+              {% for file in bin_files %}
+                {% if file != base_file %}
+                  <option value="{{ file }}">{{ file }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+
+            <button type="submit" style="padding: 6px 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">
+              Generate Heatmap
+            </button>
+          </form>
+            </div>
+            {% endif %}
+        </div>
+    <br>
+    <br>
+    <br>
+    <div id="heatmap1" style="width: 740px; display: inline-block;"></div>
+    <div id="heatmap2" style="width: 740px; display: inline-block;"></div>
+
+    <div class="button-container">
+        {% if prev_page > 0 %}
+        <a href="/display_heatmap?page={{ prev_page }}&click=next" onclick="showLoader()">Previous</a>
+        {% endif %}
+        {% if next_button_tag %}
+        <a href="/display_heatmap?page={{ next_page }}&click=next" onclick="showLoader()">Next</a>
+        {% endif %}
+    </div>
+
+    <div class="loader-container" id="loader-container">
+        <div class="loader"></div>
+    </div>
+
+<!--    <div>-->
+<!--      &lt;!&ndash; Add the heatmap div &ndash;&gt;-->
+<!--      {{ div|safe }}-->
+
+<!--    </div>-->
+
+  <div id="popup">
+    <div class="popup-content">
+      <span class="close">&times;</span>
+      <h2>Please wait</h2>
+    </div>
+  </div>
+
+    <script src="./static/script.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+   <script>
+        // Parse the plot JSON data passed from Flask
+        var plotData1 = {{ plot_json1|safe }};
+        var plotData2 = {{ plot_json2|safe }};
+
+        // Function to show the loader
+        function showLoader() {
+            document.getElementById("loader-container").classList.add("active");
+        }
+
+        // Render the heatmaps using Plotly
+        Plotly.newPlot('heatmap1', plotData1.data, plotData1.layout, {responsive: true}, function() {
+            hideLoader();
+        });
+
+        Plotly.newPlot('heatmap2', plotData2.data, plotData2.layout, {responsive: true}, function() {
+            hideLoader();
+        });
+
+        // Function to hide the loader
+        function hideLoader() {
+            document.getElementById("loader-container").classList.remove("active");
+        }
+    </script>
+
+</body>
+</html>

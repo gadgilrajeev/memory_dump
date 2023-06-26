@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>heatmap</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div style="margin-top: 65px;">
+        <form method="POST" class="horizontal-form" action="/runfile">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="start_address">Start Address:</label>
+                <input type="number" id="start_address" name="start_address" min=0 required value="start_address">
+            </div>
+
+            <div class="form-group">
+                <label for="end_address">End Address:</label>
+                <input type="number" id="end_address" name="end_address" min=0 required value="end_address">
+            </div>
+            <div class="form-group">
+                <label for="interval">Interval:</label>
+                <input type="number" id="interval" name="interval" min=0 required value="interval">
+            </div>
+
+            <div class="form-group">
+                <label for="iterations">Number of Iterations:</label>
+                <input type="number" id="iterations" name="iterations" min=0 required value="iterations">
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <input type="submit" id="popupBtn" value="Submit">
+        </div>
+        </form>
+
+<!--    {% if hex_files %}-->
+<!--        <style>-->
+<!--          .center {-->
+<!--            display: flex;-->
+<!--            justify-content: center;-->
+<!--            align-items: center;-->
+<!--            height: 16vh;-->
+<!--          }-->
+<!--        </style>-->
+
+<!--        <div class="center">-->
+<!--          <form style="text-align: center;">-->
+<!--            <label for="base_file">Base File:</label>-->
+<!--            <select id="base_file" name="base_file" style="margin-right: 10px;">-->
+<!--              {% for file in hex_files %}-->
+<!--                <option value="{{ file }}">{{ file }}</option>-->
+<!--              {% endfor %}-->
+<!--            </select>-->
+
+<!--            <label for="second_file">Second File:</label>-->
+<!--            <select id="second_file" name="second_file" style="margin-right: 10px;">-->
+<!--              {% for file in hex_files %}-->
+<!--                {% if file != base_file %}-->
+<!--                  <option value="{{ file }}">{{ file }}</option>-->
+<!--                {% endif %}-->
+<!--              {% endfor %}-->
+<!--            </select>-->
+
+<!--            <button type="submit" style="padding: 6px 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">-->
+<!--              Generate Heatmap-->
+<!--            </button>-->
+<!--          </form>-->
+<!--        </div>-->
+
+<!--        {% endif %}-->
+
+    </div>
+  <div id="popup">
+    <div class="popup-content">
+      <span class="close">&times;</span>
+      <h2>Please wait</h2>
+    </div>
+  </div>
+
+  <script src="./static/script.js"></script>
+</body>
+</html>

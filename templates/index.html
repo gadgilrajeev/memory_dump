@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>heatmap</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+<style>
+  .center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .button-container {
+    text-align: center;
+  }
+
+  .big-button {
+    display: inline-block;
+    padding: 20px 40px;
+    font-size: 24px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 10px;
+    text-decoration: none; /* Added to remove underline */
+  }
+
+  .big-button.view-heatmap {
+    background-color: orange;
+  }
+
+  .big-button:hover {
+    background-color: #45a049;
+  }
+</style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+<div class="center">
+  <div class="button-container">
+    <a href="/generate_files" class="big-button">Generate Data</a>
+<!--    <a href="/view_heatmap" class="big-button view-heatmap">View Heatmap</a>-->
+  </div>
+
+</div>
+</body>
+</html>
