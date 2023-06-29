@@ -62,6 +62,7 @@
         }
     </style>
 </head>
+
 <body>
     {% include 'navbar.html' %}
     {% if bin_files %}
@@ -84,7 +85,7 @@
             </select>
 
             <label for="second_file">Second File:</label>
-            <select id="second_file" name="second_file" style="margin-right: 10px;">
+            <select id="second_file" name="second_file" style="margin-right: 10px;" multiple>
               {% for file in bin_files %}
                 {% if file != base_file %}
                   <option value="{{ file }}">{{ file }}</option>
@@ -102,28 +103,21 @@
     <br>
     <br>
     <br>
-    <div id="heatmap1" style="width: 740px; display: inline-block;"></div>
-    <div id="heatmap2" style="width: 740px; display: inline-block;"></div>
 
+    <div id="heatmap1" style="width: 740px; display: inline-block;margin-top: 70px "></div>
+    <div id="heatmap2" style="width: 740px; display: inline-block;margin-top: 70px"></div>
     <div class="button-container">
         {% if prev_page > 0 %}
-        <a href="/display_heatmap?page={{ prev_page }}&click=next" onclick="showLoader()">Previous</a>
+        <a href="/display_heatmap?page={{ prev_page }}&click=prev&filename=dump_1.bin" onclick="showLoader()">Previous</a>
         {% endif %}
         {% if next_button_tag %}
-        <a href="/display_heatmap?page={{ next_page }}&click=next" onclick="showLoader()">Next</a>
+        <a href="/display_heatmap?page={{ next_page }}&click=next&filename=dump_1.bin" onclick="showLoader()">Next</a>
         {% endif %}
     </div>
 
     <div class="loader-container" id="loader-container">
         <div class="loader"></div>
     </div>
-
-<!--    <div>-->
-<!--      &lt;!&ndash; Add the heatmap div &ndash;&gt;-->
-<!--      {{ div|safe }}-->
-
-<!--    </div>-->
-
   <div id="popup">
     <div class="popup-content">
       <span class="close">&times;</span>
@@ -135,9 +129,11 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
    <script>
         // Parse the plot JSON data passed from Flask
-        var plotData1 = {{ plot_json1|safe }};
-        var plotData2 = {{ plot_json2|safe }};
-
+        {% if plot_json %}
+<!--        console.log("plot json",{{plot_json}});-->
+        var plotData1 = {{ plot_json[0]|safe }};
+        var plotData2 = {{ plot_json[1]|safe }};
+        {% endif %}
         // Function to show the loader
         function showLoader() {
             document.getElementById("loader-container").classList.add("active");
@@ -157,6 +153,6 @@
             document.getElementById("loader-container").classList.remove("active");
         }
     </script>
-
 </body>
+
 </html>
