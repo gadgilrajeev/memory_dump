@@ -56,5 +56,3 @@ select dump_0.bin as a base memory dump file and select dump_1.bin as a second m
 * Comparing Files: Then select second memory dump files to compare with the base file. select dump_1.bin .The application generates heatmaps for selected file and highlights the differences between the values of the base file and the compared files.
 * Pagination: The heatmaps are displayed in chunks, and users can navigate through the chunks using pagination buttons.
 * Heatmap Details: Users can hover over each memory cell in the heatmap to view the address and value details.
-
-#### Thank you 
