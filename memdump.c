@@ -5,6 +5,9 @@
 #include <windows.h>
 
 #define VERSION 0
+#define RAM_SIZE 1024*1024*10// 10MB
+
+#define VERSION 0
 #define RAM_SIZE 1024*1024*10 // 10MB
 
 void convertToHex(char *bin_path, char *hex_path, int dump_count, int start_addr, int end_addr) {
@@ -111,7 +114,6 @@ int main(int argc, char **argv) {
 
     for(i = 0; i < num_files; i++) {
         sprintf(filename, "%s\\dump_%d.bin", bin_path, dump_count);
-
         FILE *dump_file = fopen(filename, "wb");
         if(dump_file == NULL) {
             printf("Error creating dump file %s\n", filename);
